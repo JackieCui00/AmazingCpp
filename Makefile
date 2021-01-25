@@ -1,11 +1,14 @@
-dirs := $(shell for i in *; do if [[ -d $$i && -f $$i/main.cc ]]; then echo $$i; fi; done)
-objects := $(addsuffix /a.out, ${dirs})
 cppflags := -std=c++20 -g
 
-${objects} : $(addsuffix /main.cc, ${dirs})
-	g++ ${cppflags} -o $@ $<
+dirs := $(shell for i in *; do if [[ -d $$i && -f $$i/main.cc ]]; then echo $$i; fi; done)
+$(info dirs = ${dirs})
 
-.PHONY : clean compiledb
+.PHONY : all clean compiledb
+
+all : $(addsuffix /a.out, ${dirs})
+
+$(addsuffix /a.out, ${dirs}) : $(addsuffix /main.cc, ${dirs})
+	g++ ${cppflags} -o $@ $(subst a.out,main.cc,$@)
 
 compiledb :
 	compiledb -n make  -B
